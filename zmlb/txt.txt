@@ -1,0 +1,75 @@
+
+# import streamlit as st
+# import pandas as pd
+# from hybrid_insight_engine import generate_combined_insights
+# from trends import plot_health_trends
+# import matplotlib.pyplot as plt
+# import openai
+# from dotenv import load_dotenv
+# import os
+
+# # Load API key from .env
+# load_dotenv()
+
+# # Process uploaded health log
+# def load_uploaded_data(uploaded_file):
+#     df = pd.read_csv(uploaded_file, parse_dates=['date'])
+#     df.sort_values('date', inplace=True)
+#     df['mood'] = df['mood'].str.lower()
+#     return df
+
+# # Ask GPT with insights
+# def ask_gpt(user_message, insights):
+#     system_prompt = f"""
+# You are Sparkle, an AI health coach. Here are the user's recent health insights:
+
+# {insights}
+
+# Use these insights to answer the user's health-related questions in a friendly, supportive, and smart way. Be clear and helpful.
+# """
+
+#     try:
+#         response = openai.ChatCompletion.create(
+#             model="gpt-3.5-turbo",
+#             messages=[
+#                 {"role": "system", "content": system_prompt},
+#                 {"role": "user", "content": user_message}
+#             ],
+#             temperature=0.7
+#         )
+#         return response['choices'][0]['message']['content']
+#     except Exception as e:
+#         return f"⚠️ GPT error: {e}"
+
+# # Streamlit UI
+# st.set_page_config(page_title="Sparkle AI Health Chatbot", layout="centered")
+# st.title("🤖 Sparkle: AI Health Chatbot")
+# st.caption("Upload your health logs (CSV) and chat with your AI wellness assistant.")
+
+# uploaded_file = st.file_uploader("📂 Upload a CSV (date, sleep_hours, mood, steps, hydration_ml)", type=["csv"])
+
+# if uploaded_file:
+#     df = load_uploaded_data(uploaded_file)
+#     insights = generate_combined_insights(df)
+
+#     if "chat_history" not in st.session_state:
+#         st.session_state.chat_history = []
+
+#     user_query = st.text_input("Ask something like: 'How am I doing?', 'Show my hydration trend'", key="user_input")
+
+#     if user_query:
+#         if "graph" in user_query.lower() or "show" in user_query.lower():
+#             st.pyplot(plot_health_trends(df))
+#             gpt_reply = "📊 Here's your health trend graph!"
+#         else:
+#             gpt_reply = ask_gpt(user_query, "\n".join(insights))
+
+#         st.session_state.chat_history.append(("You", user_query))
+#         st.session_state.chat_history.append(("Sparkle Bot", gpt_reply))
+
+#     for sender, msg in st.session_state.chat_history:
+#         with st.chat_message(sender):
+#             st.markdown(msg)
+
+# else:
+#     st.info("👆 Please upload your health log CSV to start chatting.")
