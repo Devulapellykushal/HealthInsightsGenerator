@@ -6,8 +6,8 @@ import base64
 from io import BytesIO
 import os
 
-from hybrid_insight_engine import generate_combined_insights
-from trends import plot_health_trends
+from zmlb.backend.hybrid_insight_engine import generate_combined_insights
+from zmlb.backend.trends import plot_health_trends
 
 app = Flask(__name__)
 CORS(app) 
