@@ -368,7 +368,7 @@ export default function InsightsPage() {
               </div>
             )}
 
-            {/* Chat history display */}
+{/*             {/* Chat history display */}
             <div className="chat-area">
               {chatHistory.map((msg, index) => (
                 <div key={index} className={msg.sender === "You" ? "user-message" : "bot-message"}>
@@ -393,7 +393,7 @@ export default function InsightsPage() {
           </div>
         </motion.div>
       </div>
-
+ */}
       {/* Chatbot toggle button */}
       <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end">
         <button
