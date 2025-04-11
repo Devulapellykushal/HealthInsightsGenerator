@@ -47,7 +47,7 @@ export default function InsightsPage() {
     setTrendImage('');
 
     try {
-      const res = await fetch('https://healthinsightgenerator.onrender.com/upload-csv/', {
+      const res = await fetch('https://healthinsightsgenerator.onrender.com/upload-csv/', {
         method: 'POST',
         body: form
       });
