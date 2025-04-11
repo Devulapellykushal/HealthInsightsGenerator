@@ -418,7 +418,6 @@
 //     </main>
 //   );
 // }
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -499,8 +498,6 @@ export default function InsightsPage() {
     }
   };
 
-  
-
   return (
     <main className="relative min-h-screen bg-white text-black overflow-x-hidden">
       <BackgroundPaths />
@@ -576,29 +573,30 @@ export default function InsightsPage() {
               </div>
             )}
 
-           
+            {/* Chatbot toggle button */}
+            <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end">
+              <button
+                onClick={() => setChatOpen(!chatOpen)}
+                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full shadow-lg transition duration-200"
+              >
+                {chatOpen ? 'Close Chat' : '💬 Open Chatbot'}
+              </button>
 
-      {/* Chatbot toggle button */}
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end">
-        <button
-          onClick={() => setChatOpen(!chatOpen)}
-          className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full shadow-lg transition duration-200"
-        >
-          {chatOpen ? 'Close Chat' : '💬 Open Chatbot'}
-        </button>
-
-        {chatOpen && (
-          <div className="mt-2 w-[90vw] sm:w-[360px] h-[70vh] sm:h-[480px] bg-white rounded-xl overflow-hidden shadow-xl border">
-            <iframe
-              src="https://healthinsightsgenerator.onrender.com"
-              title="Sparkle Chatbot"
-              className="w-full h-full"
-              allow="clipboard-write"
-              style={{ border: 'none' }}
-            />
+              {chatOpen && (
+                <div className="mt-2 w-[90vw] sm:w-[360px] h-[70vh] sm:h-[480px] bg-white rounded-xl overflow-hidden shadow-xl border">
+                  <iframe
+                    src="https://healthinsightsgenerator.onrender.com"
+                    title="Sparkle Chatbot"
+                    className="w-full h-full"
+                    allow="clipboard-write"
+                    style={{ border: 'none' }}
+                  />
+                </div>
+              )}
+            </div>
           </div>
-        )}
-      </div
+        </motion.div>
+      </div>
     </main>
   );
 }
