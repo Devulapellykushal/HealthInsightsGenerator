@@ -299,9 +299,9 @@ app = Flask(__name__)
 CORS(app, origins=["https://devulapellykushalhig.vercel.app"], supports_credentials=True)
 
 # Route to test the Flask server
-@app.route('/')
-def home():
-    return '✅ Flask API is live'
+# @app.route('/')
+# def home():
+#     return '✅ Flask API is live'
 
 # Route to handle CSV upload and health insights + trends
 @app.route('/upload-csv/', methods=['POST'])
