@@ -1,6 +1,7 @@
-fastapi
+flask
 uvicorn
 pandas
 matplotlib
 scikit-learn
 python-multipart
+flask_cors
