@@ -225,6 +225,64 @@
 #     app.run(host='0.0.0.0', port=port)
 
 
+# from flask import Flask, request, jsonify
+# from flask_cors import CORS
+# import pandas as pd
+# import base64
+# from io import BytesIO
+# import matplotlib.pyplot as plt
+# import os
+
+# # 🧠 Your core logic
+# from .hybrid_insight_engine import generate_combined_insights
+# from .trends import plot_health_trends
+
+# app = Flask(__name__)
+# # CORS(app, origins="*")
+# CORS(app, origins=["https://devulapellykushalhig.vercel.app"], supports_credentials=True)
+
+# # CORS(app, origins=["https://devulapellykushalhig.vercel.app"], supports_credentials=True)
+
+# @app.route('/')
+# def home():
+#     return '✅ Flask API is live'
+
+# @app.route('/upload-csv/', methods=['POST', 'OPTIONS'])
+# def upload_csv():
+#     try:
+#         if 'file' not in request.files:
+#             return jsonify({"error": "No file uploaded"}), 400
+
+#         file = request.files['file']
+#         if not file.filename.endswith('.csv'):
+#             return jsonify({"error": "Only CSV files allowed"}), 400
+
+#         # 🧾 Read and process CSV
+#         df = pd.read_csv(file)
+#         insights = generate_combined_insights(df)
+
+#         # 📈 Generate and encode trend image
+#         fig = plot_health_trends(df)
+#         buf = BytesIO()
+#         fig.savefig(buf, format='png')
+#         buf.seek(0)
+#         img_str = base64.b64encode(buf.read()).decode()
+
+#         print("✅ Returning image, size:", len(img_str))
+
+#         return jsonify({
+#             "insights": insights,
+#             "trend_image": img_str
+#         })
+
+#     except Exception as e:
+#         print("❌ Error:", str(e))
+#         return jsonify({"error": "Internal server error", "details": str(e)}), 500
+
+# if __name__ == '__main__':
+#     port = int(os.environ.get("PORT", 10000))
+#     app.run(host='0.0.0.0', port=port)
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
@@ -232,22 +290,28 @@ import base64
 from io import BytesIO
 import matplotlib.pyplot as plt
 import os
-
-# 🧠 Your core logic
+import json
+import requests
+from dotenv import load_dotenv
 from .hybrid_insight_engine import generate_combined_insights
 from .trends import plot_health_trends
 
+# Load API keys
+load_dotenv()
+GEMINI_API_KEY = "AIzaSyBn3LmJbLYp_BypnA2eSd5YC2kim3wlUWo"
+
 app = Flask(__name__)
-# CORS(app, origins="*")
+
+# Enable CORS for frontend communication
 CORS(app, origins=["https://devulapellykushalhig.vercel.app"], supports_credentials=True)
 
-# CORS(app, origins=["https://devulapellykushalhig.vercel.app"], supports_credentials=True)
-
+# Route to test the Flask server
 @app.route('/')
 def home():
     return '✅ Flask API is live'
 
-@app.route('/upload-csv/', methods=['POST', 'OPTIONS'])
+# Route to handle CSV upload and health insights + trends
+@app.route('/upload-csv/', methods=['POST'])
 def upload_csv():
     try:
         if 'file' not in request.files:
@@ -268,17 +332,48 @@ def upload_csv():
         buf.seek(0)
         img_str = base64.b64encode(buf.read()).decode()
 
-        print("✅ Returning image, size:", len(img_str))
-
         return jsonify({
             "insights": insights,
             "trend_image": img_str
         })
 
     except Exception as e:
-        print("❌ Error:", str(e))
         return jsonify({"error": "Internal server error", "details": str(e)}), 500
+
+
+# Route to handle chatbot queries
+@app.route('/chatbot', methods=['POST'])
+def chatbot():
+    user_message = request.json.get("message")
+    
+    if not user_message:
+        return jsonify({"error": "No message provided"}), 400
+
+    prompt = f"""
+    You are Sparkle, an AI health coach. Your role is to assist with health-related queries.
+    User's question: {user_message}
+    You must respond in a friendly, supportive, and intelligent way.
+    """
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
+
+    headers = {"Content-Type": "application/json"}
+    data = {
+        "contents": [
+            {
+                "parts": [{"text": prompt}]
+            }
+        ]
+    }
+
+    try:
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+        response.raise_for_status()
+        gemini_reply = response.json()["candidates"][0]["content"]["parts"][0]["text"]
+        return jsonify({"response": gemini_reply})
+    except Exception as e:
+        return jsonify({"error": f"⚠️ Gemini API error: {e}"}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)
