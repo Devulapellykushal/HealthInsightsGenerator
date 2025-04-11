@@ -4,7 +4,7 @@ import time
 
 def run_backend():
     subprocess.run([
-        "uvicorn",
+        "python3",
         "zmlb.backend.api:app",
         "--host", "0.0.0.0",
         "--port", "8000"
