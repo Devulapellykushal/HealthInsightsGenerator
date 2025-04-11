@@ -202,11 +202,7 @@ from .hybrid_insight_engine import generate_combined_insights
 app = Flask(__name__)
 
 # ✅ CORRECT: Allow only Vercel origin
-CORS(app,
-     origins=["https://devulapellykushalhig.vercel.app"],
-     methods=["GET", "POST", "OPTIONS"],
-     allow_headers=["Content-Type"],
-     supports_credentials=True)
+CORS(app, origins="*")
 
 @app.route('/')
 def home():
