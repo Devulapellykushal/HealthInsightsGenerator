@@ -283,7 +283,7 @@
 #     port = int(os.environ.get("PORT", 10000))
 #     app.run(host='0.0.0.0', port=port)
 
-from from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
 import base64
