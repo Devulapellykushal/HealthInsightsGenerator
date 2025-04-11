@@ -283,8 +283,63 @@
 #     port = int(os.environ.get("PORT", 10000))
 #     app.run(host='0.0.0.0', port=port)
 
+# from flask import Flask, request, jsonify
+# from flask_cors import CORS
+# import pandas as pd
+# import base64
+# from io import BytesIO
+# import matplotlib.pyplot as plt
+# import os
+# from .hybrid_insight_engine import generate_combined_insights
+# from .trends import plot_health_trends
+
+# app = Flask(__name__)
+
+# # Enable CORS for frontend communication
+# CORS(app, origins=["https://devulapellykushalhig.vercel.app"], supports_credentials=True)
+
+# # Route to test the Flask server
+# # @app.route('/')
+# # def home():
+# #     return '✅ Flask API is live'
+
+# # Route to handle CSV upload and health insights + trends
+# @app.route('/upload-csv/', methods=['POST'])
+# def upload_csv():
+#     try:
+#         if 'file' not in request.files:
+#             return jsonify({"error": "No file uploaded"}), 400
+
+#         file = request.files['file']
+#         if not file.filename.endswith('.csv'):
+#             return jsonify({"error": "Only CSV files allowed"}), 400
+
+#         # 🧾 Read and process CSV
+#         df = pd.read_csv(file)
+#         insights = generate_combined_insights(df)
+
+#         # 📈 Generate and encode trend image
+#         fig = plot_health_trends(df)
+#         buf = BytesIO()
+#         fig.savefig(buf, format='png')
+#         buf.seek(0)
+#         img_str = base64.b64encode(buf.read()).decode()
+
+#         return jsonify({
+#             "insights": insights,
+#             "trend_image": img_str
+#         })
+
+#     except Exception as e:
+#         return jsonify({"error": "Internal server error", "details": str(e)}), 500
+
+# if __name__ == '__main__':
+#     port = int(os.environ.get("PORT", 10000))
+#     app.run(host='0.0.0.0', port=port, debug=True)
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import requests
 import pandas as pd
 import base64
 from io import BytesIO
@@ -295,13 +350,16 @@ from .trends import plot_health_trends
 
 app = Flask(__name__)
 
-# Enable CORS for frontend communication
+# Enable CORS for frontend communication (Add your frontend URL here)
 CORS(app, origins=["https://devulapellykushalhig.vercel.app"], supports_credentials=True)
 
+# API URL of the deployed chatbot service (replace with your actual chatbot URL)
+CHATBOT_API_URL = "https://healthinsightsgenerator.onrender.com/ask"
+
 # Route to test the Flask server
-# @app.route('/')
-# def home():
-#     return '✅ Flask API is live'
+@app.route('/')
+def home():
+    return '✅ Flask API is live'
 
 # Route to handle CSV upload and health insights + trends
 @app.route('/upload-csv/', methods=['POST'])
@@ -333,7 +391,29 @@ def upload_csv():
     except Exception as e:
         return jsonify({"error": "Internal server error", "details": str(e)}), 500
 
+# Route to handle user message for chatbot
+@app.route('/chatbot', methods=['POST'])
+def chatbot():
+    try:
+        user_message = request.json.get('user_message')
+
+        if not user_message:
+            return jsonify({"error": "No message provided"}), 400
+        
+        # Send the user message to the chatbot API
+        response = requests.post(CHATBOT_API_URL, json={"message": user_message})
+        
+        if response.status_code != 200:
+            return jsonify({"error": "Failed to fetch response from chatbot"}), 500
+
+        # Parse the response from the chatbot
+        chatbot_reply = response.json().get('response')
+
+        return jsonify({"response": chatbot_reply})
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port, debug=True)
-
