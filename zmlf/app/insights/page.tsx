@@ -263,7 +263,7 @@ export default function InsightsPage() {
     setUserMessage(""); // Clear the input field
 
     try {
-      const response = await fetch("https://your-backend-api.com/chatbot", {
+      const response = await fetch("https://healthinsightsgenerator.onrender.com/chatbot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
