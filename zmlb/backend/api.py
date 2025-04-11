@@ -139,7 +139,7 @@ from zmlb.backend.hybrid_insight_engine import generate_combined_insights
 from zmlb.backend.trends import plot_health_trends
 
 app = Flask(__name__)
-CORS(app)  # Enable Cross-Origin Resource Sharing for frontend access
+CORS(app, origins=["https://devulapellykushalhig.vercel.app"])
 
 @app.route('/upload-csv/', methods=['POST'])
 def upload_csv():
