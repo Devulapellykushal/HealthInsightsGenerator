@@ -238,7 +238,9 @@ from .hybrid_insight_engine import generate_combined_insights
 from .trends import plot_health_trends
 
 app = Flask(__name__)
-CORS(app, origins="*")
+# CORS(app, origins="*")
+CORS(app, origins=["https://devulapellykushalhig.vercel.app"], supports_credentials=True)
+
 # CORS(app, origins=["https://devulapellykushalhig.vercel.app"], supports_credentials=True)
 
 @app.route('/')
