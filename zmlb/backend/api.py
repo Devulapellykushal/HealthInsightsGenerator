@@ -139,7 +139,11 @@ from zmlb.backend.hybrid_insight_engine import generate_combined_insights
 from zmlb.backend.trends import plot_health_trends
 
 app = Flask(__name__)
-CORS(app, origins=["https://devulapellykushalhig.vercel.app"])
+CORS(app,
+     origins=["https://devulapellykushalhig.vercel.app"],
+     methods=["GET", "POST", "OPTIONS"],
+     allow_headers=["Content-Type", "Authorization"],
+     supports_credentials=True)
 
 @app.route('/upload-csv/', methods=['POST'])
 def upload_csv():
