@@ -17,22 +17,22 @@ def run_chatbot():
         "zmlb/sparkle-health-chatbot/streamlit_chatbot.py"
     ])
 
-def run_frontend():
-    subprocess.run([
-        "npm", "run","dev"
-    ], cwd="zmlf/app")  
+# def run_frontend():
+#     subprocess.run([
+#         "npm", "run","dev"
+#     ], cwd="zmlf/app")  
 
 if __name__ == "__main__":
     backend_process = multiprocessing.Process(target=run_backend)
     chatbot_process = multiprocessing.Process(target=run_chatbot)
-    frontend_process = multiprocessing.Process(target=run_frontend)
+    # frontend_process = multiprocessing.Process(target=run_frontend)
 
     backend_process.start()
     time.sleep(2)
     chatbot_process.start()
     time.sleep(2)
-    frontend_process.start()
+    # frontend_process.start()
 
     backend_process.join()
     chatbot_process.join()
-    frontend_process.join()
+    # frontend_process.join()
