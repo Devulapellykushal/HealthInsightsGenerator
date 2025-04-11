@@ -4,7 +4,7 @@ pandas
 matplotlib
 scikit-learn
 python-multipart
-flask_cors
+flask-cors
 streamlit
 pandas
 scikit-learn
