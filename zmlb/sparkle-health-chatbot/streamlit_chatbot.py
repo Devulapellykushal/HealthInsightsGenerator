@@ -283,6 +283,139 @@
 
 
 
+# import streamlit as st
+# import requests
+# import json
+# from dotenv import load_dotenv
+# import os
+# import time
+
+# # Load the API key from .env file
+# load_dotenv()
+# GEMINI_API_KEY = "AIzaSyBn3LmJbLYp_BypnA2eSd5YC2kim3wlUWo"
+
+# # Function to handle requests to the Gemini API for the chatbot response
+# def ask_gemini(user_message):
+#     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
+
+#     prompt = f"""
+# You are Sparkle, an AI health coach. Your role is to assist with health-related queries.
+# User's question: {user_message}
+# You must respond in a friendly, supportive, and intelligent way.
+# """
+
+#     headers = {"Content-Type": "application/json"}
+#     data = {
+#         "contents": [
+#             {
+#                 "parts": [{"text": prompt}]
+#             }
+#         ]
+#     }
+
+#     try:
+#         response = requests.post(url, headers=headers, data=json.dumps(data))
+#         response.raise_for_status()
+#         gemini_reply = response.json()["candidates"][0]["content"]["parts"][0]["text"]
+#         return gemini_reply
+#     except Exception as e:
+#         return f"⚠️ Gemini API error: {e}"
+
+# # Streamlit UI for the chatbot
+# st.set_page_config(page_title="Sparkle AI Health Chatbot", layout="centered")
+# st.title("🤖 Sparkle: AI Health Chatbot")
+# st.caption("Chat with Sparkle about health, wellness, healthcare, health products, and more.")
+
+# # Initialize the session state for chat history and pending message
+# if "chat_history" not in st.session_state:
+#     st.session_state.chat_history = []
+# if "pending_message" not in st.session_state:
+#     st.session_state.pending_message = None
+
+# # Display chat interface
+# with st.container():
+#     st.markdown("### 🗨️ Health Chat")
+#     chat_area = st.container()
+#     with chat_area:
+#         for sender, msg in st.session_state.chat_history:
+#             emoji = "❓" if sender == "You" else "🔍"
+#             with st.chat_message(emoji):
+#                 st.markdown(msg)
+
+#         if st.session_state.pending_message:
+#             with st.chat_message("🔍"):
+#                 with st.spinner("Sparkle is thinking..."):
+#                     time.sleep(1.5)
+#                     st.markdown(st.session_state.pending_message)
+#             st.session_state.chat_history.append(("Sparkle Bot", st.session_state.pending_message))
+#             st.session_state.pending_message = None
+#             st.rerun()
+
+# # Input field for user message
+# with st.container():
+#     with st.form(key="chat_input_form", clear_on_submit=True):
+#         user_query = st.text_input("💬 Type your message", key="user_input")
+#         submitted = st.form_submit_button("Send")
+
+#     if submitted and user_query:
+#         st.session_state.chat_history.append(("You", user_query))
+
+#         # Handle health-related queries
+#         health_keywords = ["health", "wellness", "healthcare", "medicine", "nutrition", "fitness", "health products", "hospitals", "doctors", "medications"]
+#         if any(keyword in user_query.lower() for keyword in health_keywords):
+#             # If the query contains health-related keywords, respond using Gemini API
+#             prompt = f"User: {user_query}\nBot:"
+#             gemini_reply = ask_gemini(prompt)
+#             st.session_state.pending_message = gemini_reply
+#         else:
+#             # If the query is not health-related, respond with a default message
+#             st.session_state.pending_message = "⚠️ Sorry, I can only assist with health-related queries. Please ask about health topics."
+
+#         st.rerun()
+
+# # Allow downloading the chat history as a text file
+# if "chat_history" in st.session_state and st.session_state.chat_history:
+#     export_text = ""
+#     for sender, msg in st.session_state.chat_history:
+#         emoji = "❓" if sender == "You" else "🔍"
+#         export_text += f"{emoji} {msg}\n\n"
+
+#     st.download_button(
+#         label="📥 Download Chat (.txt)",
+#         data=export_text,
+#         file_name="sparkle_chat.txt",
+#         mime="text/plain"
+#     )
+
+# # Function to create a PDF from the chat history
+# from fpdf import FPDF
+# import io
+
+# def create_chat_pdf(chat_history):
+#     pdf = FPDF()
+#     pdf.add_page()
+#     pdf.set_font("Arial", size=12)
+
+#     for sender, msg in chat_history:
+#         emoji = "❓" if sender == "You" else "🔍"
+#         text = f"{emoji} {msg}"
+#         pdf.multi_cell(0, 10, txt=text)
+#         pdf.ln()
+
+#     pdf_buffer = io.BytesIO()
+#     pdf.output(pdf_buffer)
+#     return pdf_buffer.getvalue()
+
+# # Allow downloading the chat history as a PDF
+# if st.button("📄 Download Chat (.pdf)"):
+#     pdf_bytes = create_chat_pdf(st.session_state.chat_history)
+#     st.download_button(
+#         label="📥 Save Chat PDF",
+#         data=pdf_bytes,
+#         file_name="sparkle_chat.pdf",
+#         mime="application/pdf"
+#     )
+
 import streamlit as st
 import requests
 import json
@@ -415,7 +548,6 @@ if st.button("📄 Download Chat (.pdf)"):
         file_name="sparkle_chat.pdf",
         mime="application/pdf"
     )
-
 
 
 
