@@ -493,16 +493,10 @@ with st.container():
     if submitted and user_query:
         st.session_state.chat_history.append(("You", user_query))
 
-        # Handle health-related queries
-        health_keywords = ["health", "wellness", "healthcare", "medicine", "nutrition", "fitness", "health products", "hospitals", "doctors", "medications"]
-        if any(keyword in user_query.lower() for keyword in health_keywords):
-            # If the query contains health-related keywords, respond using Gemini API
-            prompt = f"User: {user_query}\nBot:"
-            gemini_reply = ask_gemini(prompt)
-            st.session_state.pending_message = gemini_reply
-        else:
-            # If the query is not health-related, respond with a default message
-            st.session_state.pending_message = "⚠️ Sorry, I can only assist with health-related queries. Please ask about health topics."
+        # Handle all messages, no health-related condition
+        prompt = f"User: {user_query}\nBot:"
+        gemini_reply = ask_gemini(prompt)
+        st.session_state.pending_message = gemini_reply
 
         st.rerun()
 
@@ -518,35 +512,6 @@ if "chat_history" in st.session_state and st.session_state.chat_history:
         data=export_text,
         file_name="sparkle_chat.txt",
         mime="text/plain"
-    )
-
-# Function to create a PDF from the chat history
-from fpdf import FPDF
-import io
-
-def create_chat_pdf(chat_history):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-
-    for sender, msg in chat_history:
-        emoji = "❓" if sender == "You" else "🔍"
-        text = f"{emoji} {msg}"
-        pdf.multi_cell(0, 10, txt=text)
-        pdf.ln()
-
-    pdf_buffer = io.BytesIO()
-    pdf.output(pdf_buffer)
-    return pdf_buffer.getvalue()
-
-# Allow downloading the chat history as a PDF
-if st.button("📄 Download Chat (.pdf)"):
-    pdf_bytes = create_chat_pdf(st.session_state.chat_history)
-    st.download_button(
-        label="📥 Save Chat PDF",
-        data=pdf_bytes,
-        file_name="sparkle_chat.pdf",
-        mime="application/pdf"
     )
 
 
