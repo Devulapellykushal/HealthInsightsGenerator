@@ -252,47 +252,6 @@ export default function InsightsPage() {
     }
   };
 
-  // Send user message to backend and receive response
-  const handleSendMessage = async () => {
-    if (!userMessage.trim()) return; // Don't submit if message is empty
-
-    setChatHistory((prevHistory) => [
-      ...prevHistory,
-      { sender: "You", message: userMessage },
-    ]);
-    setUserMessage(""); // Clear the input field
-
-    try {
-      const response = await fetch("https://healthinsightsgenerator.onrender.com/chatbot", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_message: userMessage }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setChatHistory((prevHistory) => [
-          ...prevHistory,
-          { sender: "Bot", message: data.response },
-        ]);
-      } else {
-        setChatHistory((prevHistory) => [
-          ...prevHistory,
-          { sender: "Bot", message: "Error: Unable to get response." },
-        ]);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      setChatHistory((prevHistory) => [
-        ...prevHistory,
-        { sender: "Bot", message: "Error: Unable to connect to the chatbot." },
-      ]);
-    }
-  };
-
   return (
     <main className="relative min-h-screen bg-white text-black overflow-x-hidden">
       <BackgroundPaths />
@@ -368,52 +327,29 @@ export default function InsightsPage() {
               </div>
             )}
 
-{/*             {/* Chat history display */}
-            <div className="chat-area">
-              {chatHistory.map((msg, index) => (
-                <div key={index} className={msg.sender === "You" ? "user-message" : "bot-message"}>
-                  <strong>{msg.sender}:</strong> {msg.message}
-                </div>
-              ))}
-            </div>
-
-            {/* Chat input */}
-            <div className="input-area">
-              <input
-                type="text"
-                placeholder="Type your message..."
-                value={userMessage}
-                onChange={(e) => setUserMessage(e.target.value)}
-                className="chat-input"
-              />
-              <button onClick={handleSendMessage} className="send-button">
-                Send
+            {/* Chatbot toggle button */}
+            <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end">
+              <button
+                onClick={() => setChatOpen(!chatOpen)}
+                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full shadow-lg transition duration-200"
+              >
+                {chatOpen ? 'Close Chat' : '💬 Open Chatbot'}
               </button>
+
+              {chatOpen && (
+                <div className="mt-2 w-[90vw] sm:w-[360px] h-[70vh] sm:h-[480px] bg-white rounded-xl overflow-hidden shadow-xl border">
+                  <iframe
+                    src="https://healthinsightsgenerator.onrender.com"
+                    title="Sparkle Chatbot"
+                    className="w-full h-full"
+                    allow="clipboard-write"
+                    style={{ border: 'none' }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </motion.div>
-      </div>
- */}
-      {/* Chatbot toggle button */}
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end">
-        <button
-          onClick={() => setChatOpen(!chatOpen)}
-          className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full shadow-lg transition duration-200"
-        >
-          {chatOpen ? 'Close Chat' : '💬 Open Chatbot'}
-        </button>
-
-        {chatOpen && (
-          <div className="mt-2 w-[90vw] sm:w-[360px] h-[70vh] sm:h-[480px] bg-white rounded-xl overflow-hidden shadow-xl border">
-            <iframe
-              src="https://healthinsightsgenerator.onrender.com"
-              title="Sparkle Chatbot"
-              className="w-full h-full"
-              allow="clipboard-write"
-              style={{ border: 'none' }}
-            />
-          </div>
-        )}
       </div>
     </main>
   );
