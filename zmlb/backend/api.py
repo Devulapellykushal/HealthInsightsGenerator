@@ -283,22 +283,15 @@
 #     port = int(os.environ.get("PORT", 10000))
 #     app.run(host='0.0.0.0', port=port)
 
-from flask import Flask, request, jsonify
+from from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
 import base64
 from io import BytesIO
 import matplotlib.pyplot as plt
 import os
-import json
-import requests
-from dotenv import load_dotenv
 from .hybrid_insight_engine import generate_combined_insights
 from .trends import plot_health_trends
-
-# Load API keys
-load_dotenv()
-GEMINI_API_KEY = "AIzaSyBn3LmJbLYp_BypnA2eSd5YC2kim3wlUWo"
 
 app = Flask(__name__)
 
@@ -340,40 +333,7 @@ def upload_csv():
     except Exception as e:
         return jsonify({"error": "Internal server error", "details": str(e)}), 500
 
-
-# Route to handle chatbot queries
-@app.route('/chatbot', methods=['POST'])
-def chatbot():
-    user_message = request.json.get("message")
-    
-    if not user_message:
-        return jsonify({"error": "No message provided"}), 400
-
-    prompt = f"""
-    You are Sparkle, an AI health coach. Your role is to assist with health-related queries.
-    User's question: {user_message}
-    You must respond in a friendly, supportive, and intelligent way.
-    """
-
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
-
-    headers = {"Content-Type": "application/json"}
-    data = {
-        "contents": [
-            {
-                "parts": [{"text": prompt}]
-            }
-        ]
-    }
-
-    try:
-        response = requests.post(url, headers=headers, data=json.dumps(data))
-        response.raise_for_status()
-        gemini_reply = response.json()["candidates"][0]["content"]["parts"][0]["text"]
-        return jsonify({"response": gemini_reply})
-    except Exception as e:
-        return jsonify({"error": f"⚠️ Gemini API error: {e}"}), 500
-
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port, debug=True)
+
