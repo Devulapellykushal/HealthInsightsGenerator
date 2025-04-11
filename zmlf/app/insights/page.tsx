@@ -172,8 +172,10 @@
 //     </main>
 //   );
 // }
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
 import BackgroundPaths from '../components/BackgroundPaths';
 
 const emojis = [
@@ -183,6 +185,7 @@ const emojis = [
 ];
 
 export default function InsightsPage() {
+  // State declarations
   const [isClient, setIsClient] = useState(false);
   const [currentEmojiIndex, setCurrentEmojiIndex] = useState(0);
   const [shuffledEmojis, setShuffledEmojis] = useState(emojis);
@@ -191,14 +194,16 @@ export default function InsightsPage() {
   const [chatOpen, setChatOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [userMessage, setUserMessage] = useState(""); // Stores current user message
-  const [chatHistory, setChatHistory] = useState([]); // Stores chat history
+  const [userMessage, setUserMessage] = useState('');
+  const [chatHistory, setChatHistory] = useState<{ sender: string, message: string }[]>([]);
 
+  // Set up emojis rotation on client-side
   useEffect(() => {
     setIsClient(true);
     setShuffledEmojis([...emojis].sort(() => Math.random() - 0.5));
   }, []);
 
+  // Set up interval to change emoji every 2 seconds
   useEffect(() => {
     if (!isClient) return;
     const interval = setInterval(() => {
@@ -207,10 +212,12 @@ export default function InsightsPage() {
     return () => clearInterval(interval);
   }, [isClient, shuffledEmojis.length]);
 
+  // File upload handler
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedFile(e.target.files?.[0] || null);
   };
 
+  // Handle file submission and send it to the API
   const handleSubmitUpload = async () => {
     if (!selectedFile) return;
 
@@ -245,6 +252,7 @@ export default function InsightsPage() {
     }
   };
 
+  // Send user message to backend and receive response
   const handleSendMessage = async () => {
     if (!userMessage.trim()) return; // Don't submit if message is empty
 
@@ -410,3 +418,4 @@ export default function InsightsPage() {
     </main>
   );
 }
+
