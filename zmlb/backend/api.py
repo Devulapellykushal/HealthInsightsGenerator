@@ -197,7 +197,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
-from zmlb.backend.hybrid_insight_engine import generate_combined_insights
+from .hybrid_insight_engine import generate_combined_insights
 
 app = Flask(__name__)
 
